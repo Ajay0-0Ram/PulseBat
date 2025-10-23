@@ -12,13 +12,13 @@ from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
 
 #--- Visualisation ---
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 #--- Import our data ---
 data = pd.read_feather("PulseBat.feather")
 
 #--- Data Preprocessing and Aggregation ---
-#ATTENTION! SORT HERE (BEFORE DROPPING THE OTHER COLUMNS)
+#ATTENTION! SORT HERE (BEFORE DROPPING THE OTHER COLUMNS), example of sort by SOH
+data = data.sort_values(by="SOH")
 #Only keep Numerical Columns
 model_data = data[['Qn', 'Q', 'SOC', 'SOE'] + [f'U{i}' for i in range(1, 22)] + ['SOH']]
 
@@ -27,8 +27,8 @@ X = model_data[[f"U{i}" for i in range(1, 22)] + ["SOC", "SOE"]]
 Y = model_data["SOH"]
 
 #Split the data into Train and Test sets (80/20)
-#ATTENTION! CURRENT "SORTING METHOD" IS RANDOM: "random_state=42"
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
+#ATTENTION! CURRENT "SORTING METHOD" IS by SOH
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, shuffle=False)
 
 #--- Training ---
 model = LinearRegression()
